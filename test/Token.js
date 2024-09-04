@@ -3,7 +3,7 @@ const { expect } = require('chai');
 
 describe('Token', () => {
 	let token;
-	
+
 	beforeEach( async () => {
 		// Test setup - deploy and fetch token
 		const Token = await ethers.getContractFactory('Token');
@@ -12,16 +12,12 @@ describe('Token', () => {
 
 	// Tests go here
 	it('has correct name', async () => {
-		// Read token name
-		const name = await token.name()
 		// Check name is correct
-		expect(name).to.equal('Lima Coin');
+		expect(await token.name()).to.equal('Lima Coin');
 	});
 
 	it('has correct symbol', async () => {
-		// read token symbol
-		const symbol = await token.symbol()
 		// Check symbol is correct
-		expect(symbol).to.equal('LIMA');
+		expect(await token.symbol()).to.equal('LIMA');
 	});
 });
