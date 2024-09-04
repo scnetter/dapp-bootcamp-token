@@ -5,5 +5,6 @@ pragma solidity ^0.8.4;
 import "hardhat/console.sol";
 
 contract Token {
-	string public name = "LIMA Coin";
+	string public name = "Lima Coin";
+	string public symbol = "LIMA";
 }
