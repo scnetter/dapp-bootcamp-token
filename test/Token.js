@@ -7,12 +7,14 @@ const tokens = (n) => {
 }
 
 describe('Token', () => {
-	let token;
+	let token, accounts, deployerAddress;
 
 	beforeEach( async () => {
 		// Test setup - deploy and fetch token
 		const Token = await ethers.getContractFactory('Token');
 		token = await Token.deploy("Lima Coin", "LIMA", 1000000);
+		accounts = await ethers.getSigners();
+		deployerAddress = accounts[0].address;
 	});
 
 	describe('Deployment', () => {
@@ -35,10 +37,14 @@ describe('Token', () => {
 			// Check symbol is correct
 			expect(await token.decimals()).to.equal(decimals);
 		});
-			it('has correct totalSupply', async () => {
+		it('has correct totalSupply', async () => {
 		// Check symbol is correct
 			
 			expect(await token.totalSupply()).to.equal(totalSupply);
+		});
+		it('assigns total supply to deployer', async () => {
+			expect(await token.totalSupply()).to.equal(await token.balanceOf(deployerAddress));
+			
 		});
 	})
 
