@@ -6,15 +6,20 @@ const tokens = (n) => {
 	return ethers.utils.parseUnits(n.toString(), 'ether');
 }
 
+const totalSupply = tokens(1000000);
+
 describe('Token', () => {
-	let token, accounts, deployerAddress;
+	let token, accounts, deployerAddress, deployer, receiver;
 
 	beforeEach( async () => {
 		// Test setup - deploy and fetch token
 		const Token = await ethers.getContractFactory('Token');
 		token = await Token.deploy("Lima Coin", "LIMA", 1000000);
 		accounts = await ethers.getSigners();
-		deployerAddress = accounts[0].address;
+		deployer = accounts[0];
+		receiver = accounts[1];
+		deployerAddress = deployer.address;
+		receiverAddress = receiver.address;
 	});
 
 	describe('Deployment', () => {
@@ -22,7 +27,6 @@ describe('Token', () => {
 		const name = 'Lima Coin';
 		const symbol = 'LIMA';
 		const decimals = 18;
-		const totalSupply = tokens(1000000);
 		// Deployment Tests go here
 		it('has correct name', async () => {
 			// Check name is correct
@@ -46,6 +50,16 @@ describe('Token', () => {
 			expect(await token.totalSupply()).to.equal(await token.balanceOf(deployerAddress));
 			
 		});
-	})
+	});
 
+	describe('Transfers', () => {
+		it('transfers tokens between accounts', async () => {
+			// Creates a signed contract
+			let transaction = await token.connect(deployer).transfer(receiverAddress, tokens(100));
+			let result = transaction.wait();
+			console.log(result);
+			expect(await deployer.getBalance()).to.equal(totalSupply - tokens(100));
+			expect(await token.balanceOf(receiverAddress)).to.equal(tokens(100)); 
+		});
+	});
 });

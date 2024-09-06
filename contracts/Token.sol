@@ -15,10 +15,19 @@ contract Token {
 
 	constructor(string memory _name,
 				string memory _symbol,
-				uint256 _totalSupply) {
+				uint256 _totalSupply) 
+	{
 		name = _name;
 		symbol = _symbol;
 		totalSupply = _totalSupply * (10**decimals);
 		balanceOf[msg.sender] = totalSupply;
 	}
+
+	function transfer(address _to, uint256 _value) 
+		public 
+		returns (bool success) 
+	{
+		balanceOf[_to] += _value;
+		balanceOf[msg.sender] -= _value;
+	}	
 }
