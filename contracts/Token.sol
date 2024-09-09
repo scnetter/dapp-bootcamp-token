@@ -29,5 +29,6 @@ contract Token {
 	{
 		balanceOf[_to] += _value;
 		balanceOf[msg.sender] -= _value;
+		return true;
 	}	
 }

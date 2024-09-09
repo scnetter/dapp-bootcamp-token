@@ -53,13 +53,16 @@ describe('Token', () => {
 	});
 
 	describe('Transfers', () => {
-		it('transfers tokens between accounts', async () => {
-			// Creates a signed contract
-			let transaction = await token.connect(deployer).transfer(receiverAddress, tokens(100));
-			let result = transaction.wait();
-			console.log(result);
-			expect(await deployer.getBalance()).to.equal(totalSupply - tokens(100));
-			expect(await token.balanceOf(receiverAddress)).to.equal(tokens(100)); 
+		let amount, transaction, result;
+
+		beforeEach( async () => {
+			amount = tokens(100);
+			transaction = await token.connect(deployer).transfer(receiverAddress, amount);
+			result = transaction.wait();
+		});
+    		it('transfers tokens between accounts', async () => {
+			expect(await token.balanceOf(deployerAddress)).to.equal(tokens(999900));
+			expect(await token.balanceOf(receiverAddress)).to.equal(amount);
 		});
 	});
 });
