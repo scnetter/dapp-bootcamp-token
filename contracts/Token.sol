@@ -13,6 +13,12 @@ contract Token {
 	// Track balances
 	mapping(address => uint256) public balanceOf;
 
+	event Transfer(
+		address indexed _from, 
+		address indexed _to, 
+		uint256 _value
+	);
+
 	constructor(string memory _name,
 				string memory _symbol,
 				uint256 _totalSupply) 
@@ -25,10 +31,15 @@ contract Token {
 
 	function transfer(address _to, uint256 _value) 
 		public 
-		returns (bool success) 
+		returns (bool success)
 	{
+		require(balanceOf[msg.sender] >= _value, "ERC20: transfer amount exceeds balance");
+		require(_to != address(0), "ERC20: transfer to the zero address");
+		
 		balanceOf[_to] += _value;
 		balanceOf[msg.sender] -= _value;
+		
+		emit Transfer(msg.sender, _to, _value);
 		return true;
 	}	
 }

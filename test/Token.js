@@ -55,14 +55,39 @@ describe('Token', () => {
 	describe('Transfers', () => {
 		let amount, transaction, result;
 
-		beforeEach( async () => {
-			amount = tokens(100);
-			transaction = await token.connect(deployer).transfer(receiverAddress, amount);
-			result = transaction.wait();
+		describe('Success', () => {
+			beforeEach( async () => {
+				amount = tokens(100);
+				transaction = await token.connect(deployer).transfer(receiverAddress, amount);
+				result = await transaction.wait();
+			});
+
+			it('transfers tokens between accounts', async () => {
+				expect(await token.balanceOf(deployerAddress)).to.equal(tokens(999900));
+				expect(await token.balanceOf(receiverAddress)).to.equal(amount);
+			});
+
+			it('emits a Transfer event', async () => {
+
+			    const event = result.events[0];
+			    expect(event.event).to.equal('Transfer');
+
+			    const argss = event.args;
+			    expect(argss._from).to.equal(deployerAddress);
+			    expect(argss._to).to.equal(receiverAddress);
+			    expect(argss._value).to.equal(amount);
+			});
 		});
-    		it('transfers tokens between accounts', async () => {
-			expect(await token.balanceOf(deployerAddress)).to.equal(tokens(999900));
-			expect(await token.balanceOf(receiverAddress)).to.equal(amount);
+
+		describe('Failure', async () => {
+			it('fails if sender does not have enough tokens', async () => {
+				const invalidAmount = tokens(totalSupply + 1);
+				await expect(token.connect(deployer).transfer(receiverAddress, invalidAmount)).to.be.reverted;
+			});
+			it('fails if the recipient does not exist', async () => {
+				await expect(token.connect(deployer).transfer(ethers.constants.AddressZero, amount)).to.be.reverted;
+			});
 		});
+
 	});
 });
