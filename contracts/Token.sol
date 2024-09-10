@@ -31,17 +31,22 @@ contract Token {
 		balanceOf[msg.sender] = totalSupply;
 	}
 
+	function _transfer(address _from, address _to, uint256 _value)
+		internal
+	{
+		require(_to != address(0), "ERC20: transfer to the zero address");
+		balanceOf[_to] += _value;
+		balanceOf[_from] -= _value;
+
+		emit Transfer(_from, _to, _value);
+	}
+
 	function transfer(address _to, uint256 _value) 
 		public 
 		returns (bool success)
 	{
 		require(balanceOf[msg.sender] >= _value, "ERC20: transfer amount exceeds balance");
-		require(_to != address(0), "ERC20: transfer to the zero address");
-		
-		balanceOf[_to] += _value;
-		balanceOf[msg.sender] -= _value;
-		
-		emit Transfer(msg.sender, _to, _value);
+		_transfer(msg.sender, _to, _value);
 		return true;
 	}	
 
@@ -60,5 +65,21 @@ contract Token {
 		emit Approval(msg.sender, _spender, _value);
 		return true;
 	}
+
+	function transferFrom(address _from, address _to, uint256 _value) 
+		public 
+		returns (bool success) 
+	{
+		require(balanceOf[_from] >= _value, "ERC20: transfer amount exceeds balance");
+		require(allowance[_from][msg.sender] >= _value, "ERC20: insufficient allowance");
+		
+		_transfer(_from, _to, _value);	
+
+		// Decrement Allowance
+		allowance[_from][msg.sender] -= _value;
+
+		return true;
+	}
+		
 
 }
