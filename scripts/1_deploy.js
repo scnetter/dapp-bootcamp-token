@@ -1,6 +1,7 @@
 async function main() {
 	const Token = await ethers.getContractFactory("Token");
-	const token = await Token.deploy();
+
+	const token = await Token.deploy('Lima Token', 'LIMA', '1000000');
 	await token.deployed();
 
 	// No need to call token.deployed() explicitly

@@ -79,7 +79,5 @@ contract Token {
 		allowance[_from][msg.sender] -= _value;
 
 		return true;
-	}
-		
-
+	}	
 }
